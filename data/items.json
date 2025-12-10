@@ -1,0 +1,25 @@
+{
+  "items": [
+    {
+      "id": "log_simple",
+      "name": "Simple Log",
+      "value": 50,
+      "description": "A basic log useful for early crafting.",
+      "rarity": "common"
+    },
+    {
+      "id": "log_oak",
+      "name": "Oak Log",
+      "value": 100,
+      "description": "A sturdier oak log.",
+      "rarity": "common"
+    },
+    {
+      "id": "log_yew",
+      "name": "Yew Log",
+      "value": 200,
+      "description": "A dense yew log favored by fletchers.",
+      "rarity": "uncommon"
+    }
+  ]
+}
