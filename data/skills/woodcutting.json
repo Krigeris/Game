@@ -1,0 +1,33 @@
+{
+  "id": "woodcutting",
+  "name": "Woodcutting",
+  "description": "Harvest logs from trees to fuel production skills.",
+  "base_rate": 2.0,
+  "rate_per_level": 0.6,
+  "actions": [
+    {
+      "id": "simple_log",
+      "name": "Simple Tree",
+      "item_id": "log_simple",
+      "required_level": 1,
+      "action_value": 50,
+      "flavor": "A small tree ideal for beginners."
+    },
+    {
+      "id": "oak_log",
+      "name": "Oak Tree",
+      "item_id": "log_oak",
+      "required_level": 10,
+      "action_value": 100,
+      "flavor": "Sturdy oak that takes longer to chop."
+    },
+    {
+      "id": "yew_log",
+      "name": "Yew Tree",
+      "item_id": "log_yew",
+      "required_level": 25,
+      "action_value": 200,
+      "flavor": "Dense yew with valuable heartwood."
+    }
+  ]
+}
