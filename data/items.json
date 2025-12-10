@@ -1,0 +1,214 @@
+{
+  "items": [
+    {
+      "id": "bamboo_logs",
+      "name": "Bamboo Logs",
+      "value": 40,
+      "tier": 1,
+      "image": "images/Woodcutting/Bamboo Logs.png"
+    },
+    {
+      "id": "simple_logs",
+      "name": "Simple Logs",
+      "value": 50,
+      "tier": 5,
+      "image": "images/Woodcutting/Simple Logs.png"
+    },
+    {
+      "id": "new_logs",
+      "name": "New Logs",
+      "value": 60,
+      "tier": 8,
+      "image": "images/Woodcutting/New Logs.png"
+    },
+    {
+      "id": "i_logs",
+      "name": "I Logs",
+      "value": 70,
+      "tier": 10,
+      "image": "images/Woodcutting/I Logs.png"
+    },
+    {
+      "id": "oak_logs",
+      "name": "Oak Logs",
+      "value": 80,
+      "tier": 12,
+      "image": "images/Woodcutting/Oak Logs.png"
+    },
+    {
+      "id": "willow_logs",
+      "name": "Willow Logs",
+      "value": 100,
+      "tier": 15,
+      "image": "images/Woodcutting/Willow Logs.png"
+    },
+    {
+      "id": "maple_logs",
+      "name": "Maple Logs",
+      "value": 120,
+      "tier": 20,
+      "image": "images/Woodcutting/Maple Logs.png"
+    },
+    {
+      "id": "elm_logs",
+      "name": "Elm Logs",
+      "value": 140,
+      "tier": 22,
+      "image": "images/Woodcutting/Elm Logs.png"
+    },
+    {
+      "id": "evergreen_logs",
+      "name": "Evergreen Logs",
+      "value": 160,
+      "tier": 25,
+      "image": "images/Woodcutting/Evergreen Logs.png"
+    },
+    {
+      "id": "spruce_logs",
+      "name": "Spruce Logs",
+      "value": 180,
+      "tier": 28,
+      "image": "images/Woodcutting/Spruce Logs.png"
+    },
+    {
+      "id": "teak_logs",
+      "name": "Teak Logs",
+      "value": 200,
+      "tier": 30,
+      "image": "images/Woodcutting/Teak Logs.png"
+    },
+    {
+      "id": "mahogany_logs",
+      "name": "Mahogany Logs",
+      "value": 240,
+      "tier": 35,
+      "image": "images/Woodcutting/Mahogany Logs.png"
+    },
+    {
+      "id": "woodwind_logs",
+      "name": "Woodwind Logs",
+      "value": 260,
+      "tier": 38,
+      "image": "images/Woodcutting/Woodwind Logs.png"
+    },
+    {
+      "id": "white_pine_logs",
+      "name": "White Pine Logs",
+      "value": 280,
+      "tier": 40,
+      "image": "images/Woodcutting/White Pine Logs.png"
+    },
+    {
+      "id": "poison_ivy_logs",
+      "name": "Poison Ivy Logs",
+      "value": 300,
+      "tier": 42,
+      "image": "images/Woodcutting/Poison Ivy Logs.png"
+    },
+    {
+      "id": "essence_logs",
+      "name": "Essence Logs",
+      "value": 330,
+      "tier": 45,
+      "image": "images/Woodcutting/Essence Logs.png"
+    },
+    {
+      "id": "enriched_moss_logs",
+      "name": "Enriched Moss Logs",
+      "value": 360,
+      "tier": 48,
+      "image": "images/Woodcutting/Enriched Moss Logs.png"
+    },
+    {
+      "id": "crystal_logs",
+      "name": "Crystal Logs",
+      "value": 400,
+      "tier": 50,
+      "image": "images/Woodcutting/Crystal Logs.png"
+    },
+    {
+      "id": "celestial_logs",
+      "name": "Celestial Logs",
+      "value": 440,
+      "tier": 52,
+      "image": "images/Woodcutting/Celestial Logs.png"
+    },
+    {
+      "id": "chrome_logs",
+      "name": "Chrome Logs",
+      "value": 480,
+      "tier": 55,
+      "image": "images/Woodcutting/Chrome Logs.png"
+    },
+    {
+      "id": "chaos_vines",
+      "name": "Chaos Vines",
+      "value": 520,
+      "tier": 58,
+      "image": "images/Woodcutting/Chaos Vines.png"
+    },
+    {
+      "id": "yew_logs",
+      "name": "Yew Logs",
+      "value": 560,
+      "tier": 60,
+      "image": "images/Woodcutting/Yew Logs.png"
+    },
+    {
+      "id": "volatile_logs",
+      "name": "Volatile Logs",
+      "value": 620,
+      "tier": 65,
+      "image": "images/Woodcutting/Volatile Logs.png"
+    },
+    {
+      "id": "warped_logs",
+      "name": "Warped Logs",
+      "value": 660,
+      "tier": 68,
+      "image": "images/Woodcutting/Warped Logs.png"
+    },
+    {
+      "id": "roots_logs",
+      "name": "Roots Logs",
+      "value": 700,
+      "tier": 70,
+      "image": "images/Woodcutting/Roots logs.png"
+    },
+    {
+      "id": "redwood_logs",
+      "name": "Redwood Logs",
+      "value": 760,
+      "tier": 72,
+      "image": "images/Woodcutting/Redwood Logs.png"
+    },
+    {
+      "id": "elder_logs",
+      "name": "Elder Logs",
+      "value": 820,
+      "tier": 75,
+      "image": "images/Woodcutting/Elder Logs.png"
+    },
+    {
+      "id": "darkcore_logs",
+      "name": "Darkcore Logs",
+      "value": 900,
+      "tier": 78,
+      "image": "images/Woodcutting/Darkcore Logs.png"
+    },
+    {
+      "id": "essence_vines",
+      "name": "Essence Vines",
+      "value": 960,
+      "tier": 80,
+      "image": "images/Woodcutting/Essence Logs.png"
+    },
+    {
+      "id": "magic_logs",
+      "name": "Magic Logs",
+      "value": 1040,
+      "tier": 85,
+      "image": "images/Woodcutting/Magic Logs.png"
+    }
+  ]
+}

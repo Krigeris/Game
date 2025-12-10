@@ -1,0 +1,249 @@
+{
+  "id": "woodcutting",
+  "name": "Woodcutting",
+  "description": "Harvest logs from trees to fuel production skills.",
+  "base_rate": 2.0,
+  "rate_per_level": 0.6,
+  "actions": [
+    {
+      "id": "bamboo_tree",
+      "name": "Bamboo",
+      "item_id": "bamboo_logs",
+      "required_level": 1,
+      "action_value": 40,
+      "flavor": "Slender stalks that fall quickly."
+    },
+    {
+      "id": "simple_tree",
+      "name": "Simple Logs",
+      "item_id": "simple_logs",
+      "required_level": 5,
+      "action_value": 50,
+      "flavor": "Starter wood for beginners."
+    },
+    {
+      "id": "new_tree",
+      "name": "New Logs",
+      "item_id": "new_logs",
+      "required_level": 8,
+      "action_value": 60,
+      "flavor": "Fresh wood with a clean grain."
+    },
+    {
+      "id": "i_tree",
+      "name": "I Logs",
+      "item_id": "i_logs",
+      "required_level": 10,
+      "action_value": 70,
+      "flavor": "Compact lumber that splits evenly."
+    },
+    {
+      "id": "oak_tree",
+      "name": "Oak Logs",
+      "item_id": "oak_logs",
+      "required_level": 12,
+      "action_value": 80,
+      "flavor": "Sturdy oak that takes longer to chop."
+    },
+    {
+      "id": "willow_tree",
+      "name": "Willow Logs",
+      "item_id": "willow_logs",
+      "required_level": 15,
+      "action_value": 90,
+      "flavor": "Flexible branches great for bows."
+    },
+    {
+      "id": "maple_tree",
+      "name": "Maple Logs",
+      "item_id": "maple_logs",
+      "required_level": 20,
+      "action_value": 100,
+      "flavor": "Syrupy scent and smooth cuts."
+    },
+    {
+      "id": "elm_tree",
+      "name": "Elm Logs",
+      "item_id": "elm_logs",
+      "required_level": 22,
+      "action_value": 110,
+      "flavor": "Dense wood with tight grains."
+    },
+    {
+      "id": "evergreen_tree",
+      "name": "Evergreen Logs",
+      "item_id": "evergreen_logs",
+      "required_level": 25,
+      "action_value": 120,
+      "flavor": "Fresh scent and tall trunks."
+    },
+    {
+      "id": "spruce_tree",
+      "name": "Spruce Logs",
+      "item_id": "spruce_logs",
+      "required_level": 28,
+      "action_value": 130,
+      "flavor": "Conifer with straight grain."
+    },
+    {
+      "id": "teak_tree",
+      "name": "Teak Logs",
+      "item_id": "teak_logs",
+      "required_level": 30,
+      "action_value": 140,
+      "flavor": "Oily wood valued for durability."
+    },
+    {
+      "id": "mahogany_tree",
+      "name": "Mahogany Logs",
+      "item_id": "mahogany_logs",
+      "required_level": 35,
+      "action_value": 150,
+      "flavor": "Rich crimson lumber for fine work."
+    },
+    {
+      "id": "woodwind_tree",
+      "name": "Woodwind Logs",
+      "item_id": "woodwind_logs",
+      "required_level": 38,
+      "action_value": 160,
+      "flavor": "Hollowed trunks prized by bards."
+    },
+    {
+      "id": "white_pine_tree",
+      "name": "White Pine Logs",
+      "item_id": "white_pine_logs",
+      "required_level": 40,
+      "action_value": 170,
+      "flavor": "Pale timber with clean scent."
+    },
+    {
+      "id": "poison_ivy_tree",
+      "name": "Poison Ivy Logs",
+      "item_id": "poison_ivy_logs",
+      "required_level": 42,
+      "action_value": 180,
+      "flavor": "Handle with care; oils are irritating."
+    },
+    {
+      "id": "essence_tree",
+      "name": "Essence Logs",
+      "item_id": "essence_logs",
+      "required_level": 45,
+      "action_value": 190,
+      "flavor": "Buzzing with latent magic."
+    },
+    {
+      "id": "enriched_moss_tree",
+      "name": "Enriched Moss Logs",
+      "item_id": "enriched_moss_logs",
+      "required_level": 48,
+      "action_value": 200,
+      "flavor": "Soft bark hiding dense cores."
+    },
+    {
+      "id": "crystal_tree",
+      "name": "Crystal Logs",
+      "item_id": "crystal_logs",
+      "required_level": 50,
+      "action_value": 210,
+      "flavor": "Shimmering wood that refracts light."
+    },
+    {
+      "id": "celestial_tree",
+      "name": "Celestial Logs",
+      "item_id": "celestial_logs",
+      "required_level": 52,
+      "action_value": 220,
+      "flavor": "Gleaming bark touched by stars."
+    },
+    {
+      "id": "chrome_tree",
+      "name": "Chrome Logs",
+      "item_id": "chrome_logs",
+      "required_level": 55,
+      "action_value": 230,
+      "flavor": "Metallic sheen with solid heft."
+    },
+    {
+      "id": "chaos_vine",
+      "name": "Chaos Vines",
+      "item_id": "chaos_vines",
+      "required_level": 58,
+      "action_value": 240,
+      "flavor": "Twisting vines that fight back."
+    },
+    {
+      "id": "yew_tree",
+      "name": "Yew Logs",
+      "item_id": "yew_logs",
+      "required_level": 60,
+      "action_value": 250,
+      "flavor": "Dense yew with valuable heartwood."
+    },
+    {
+      "id": "volatile_tree",
+      "name": "Volatile Logs",
+      "item_id": "volatile_logs",
+      "required_level": 65,
+      "action_value": 260,
+      "flavor": "Unstable sap that crackles."
+    },
+    {
+      "id": "warped_tree",
+      "name": "Warped Logs",
+      "item_id": "warped_logs",
+      "required_level": 68,
+      "action_value": 270,
+      "flavor": "Twisted grains that test your axe."
+    },
+    {
+      "id": "roots_tree",
+      "name": "Roots Logs",
+      "item_id": "roots_logs",
+      "required_level": 70,
+      "action_value": 280,
+      "flavor": "Tangled underground haul."
+    },
+    {
+      "id": "redwood_tree",
+      "name": "Redwood Logs",
+      "item_id": "redwood_logs",
+      "required_level": 72,
+      "action_value": 290,
+      "flavor": "Towering giants with deep rings."
+    },
+    {
+      "id": "elder_tree",
+      "name": "Elder Logs",
+      "item_id": "elder_logs",
+      "required_level": 75,
+      "action_value": 300,
+      "flavor": "Ancient trees guarding the forest."
+    },
+    {
+      "id": "darkcore_tree",
+      "name": "Darkcore Logs",
+      "item_id": "darkcore_logs",
+      "required_level": 78,
+      "action_value": 320,
+      "flavor": "Shadow-tainted timber."
+    },
+    {
+      "id": "essence_vine",
+      "name": "Essence Vines",
+      "item_id": "essence_vines",
+      "required_level": 80,
+      "action_value": 330,
+      "flavor": "Magical creepers humming with power."
+    },
+    {
+      "id": "magic_tree",
+      "name": "Magic Logs",
+      "item_id": "magic_logs",
+      "required_level": 85,
+      "action_value": 350,
+      "flavor": "Eldritch lumber that glows softly."
+    }
+  ]
+}
