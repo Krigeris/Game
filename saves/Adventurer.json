@@ -1,0 +1,16 @@
+{
+  "name": "Adventurer",
+  "inventory": {},
+  "skills": {
+    "woodcutting": {
+      "xp": 0.0,
+      "level": 1,
+      "actions": {}
+    }
+  },
+  "collection_log": {
+    "items": {},
+    "skills": {},
+    "entities": {}
+  }
+}
