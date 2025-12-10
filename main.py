@@ -97,6 +97,8 @@ class NotificationManager:
         self.frame = frame
         self.queue: List[str] = []
         self.active_labels: List[tk.Label] = []
+        self.frame.config(height=180)
+        self.frame.pack_propagate(False)
 
     def push(self, message: str):
         self.queue.append(message)
@@ -105,7 +107,7 @@ class NotificationManager:
     def _process_queue(self):
         if not self.queue:
             return
-        if len(self.active_labels) >= 5:
+        if len(self.active_labels) >= 6:
             return
         message = self.queue.pop(0)
         label = tk.Label(
@@ -118,15 +120,22 @@ class NotificationManager:
             pady=4,
             borderwidth=2,
         )
-        label.pack(side=tk.TOP, pady=2)
+        label.update_idletasks()
+        start_y = self.frame.winfo_height() - 10
+        label.place(relx=0.5, y=start_y, anchor="s")
         self.active_labels.append(label)
-        self.frame.after(2500, lambda: self._pop(label))
+        self._animate_label(label, 0)
 
-    def _pop(self, label: tk.Label):
-        if label in self.active_labels:
-            self.active_labels.remove(label)
-        label.destroy()
-        self._process_queue()
+    def _animate_label(self, label: tk.Label, step: int):
+        if step >= 35:
+            if label in self.active_labels:
+                self.active_labels.remove(label)
+            label.destroy()
+            self._process_queue()
+            return
+        current_y = label.winfo_y()
+        label.place_configure(y=current_y - 3)
+        self.frame.after(40, lambda: self._animate_label(label, step + 1))
 
 
 class IdleGameApp(tk.Tk):
@@ -143,6 +152,10 @@ class IdleGameApp(tk.Tk):
         self.player_state: Optional[Dict] = None
         self.current_activity: Optional[Dict] = None
         self.progress_amount: float = 0.0
+        self.active_skill: Optional[SkillDefinition] = None
+        self.active_skill_ui: Dict[str, Dict[str, tk.Widget]] = {}
+        self.active_tab: Optional[str] = None
+        self.image_cache: Dict[str, tk.PhotoImage] = {}
 
         self.loading_frame: Optional[tk.Frame] = None
         self.main_frame: Optional[tk.Frame] = None
@@ -196,7 +209,7 @@ class IdleGameApp(tk.Tk):
         self.main_frame.columnconfigure(1, weight=2, minsize=520)
         self.main_frame.columnconfigure(2, weight=1, minsize=260)
         self.main_frame.rowconfigure(0, weight=5)
-        self.main_frame.rowconfigure(1, weight=1)
+        self.main_frame.rowconfigure(1, weight=0, minsize=140)
 
         self.left_pane = tk.Frame(self.main_frame, bg="#111827", padx=10, pady=10)
         self.left_pane.grid(row=0, column=0, rowspan=2, sticky="nsew")
@@ -210,8 +223,9 @@ class IdleGameApp(tk.Tk):
         self.right_pane.grid(row=0, column=2, rowspan=2, sticky="nsew")
         self._build_right_tabs()
 
-        self.summary_pane = tk.Frame(self.main_frame, bg="#0b132c", padx=12, pady=8)
+        self.summary_pane = tk.Frame(self.main_frame, bg="#0b132c", padx=12, pady=8, height=140)
         self.summary_pane.grid(row=1, column=1, sticky="nsew")
+        self.summary_pane.grid_propagate(False)
         self._build_summary()
 
         self.notification_frame = tk.Frame(self.center_pane, bg="#0b1224")
@@ -244,6 +258,15 @@ class IdleGameApp(tk.Tk):
         )
         self.center_header.pack(anchor="w")
 
+        self.center_subheader = tk.Label(
+            self.center_pane,
+            text="",
+            font=("Segoe UI", 10),
+            fg="#cbd5e1",
+            bg="#0b1224",
+        )
+        self.center_subheader.pack(anchor="w")
+
         self.center_body = tk.Frame(self.center_pane, bg="#0b1224")
         self.center_body.pack(expand=True, fill=tk.BOTH, pady=8)
 
@@ -269,10 +292,9 @@ class IdleGameApp(tk.Tk):
             btn.grid(row=idx // 3, column=idx % 3, padx=4, pady=4)
             self.tab_buttons.append(btn)
 
-        self.tab_content = tk.Text(self.right_pane, height=20, bg="#0f172a", fg="#e5e7eb", wrap=tk.WORD)
-        self.tab_content.insert(tk.END, "Select a tab to inspect player data.")
-        self.tab_content.config(state=tk.DISABLED)
-        self.tab_content.pack(expand=True, fill=tk.BOTH)
+        self.tab_content_frame = tk.Frame(self.right_pane, bg="#0f172a")
+        self.tab_content_frame.pack(expand=True, fill=tk.BOTH)
+        self._show_tab("Inventory")
 
     def _build_summary(self):
         self.summary_title = tk.Label(
@@ -308,27 +330,55 @@ class IdleGameApp(tk.Tk):
     def _render_skill(self, skill: SkillDefinition):
         for child in self.center_body.winfo_children():
             child.destroy()
-        self.center_header.config(text=f"{skill.name}: {skill.description}")
+        self.active_skill = skill
+        self.active_skill_ui = {}
 
-        player_level = self.player_state["skills"].get(skill.id, {}).get("level", 1)
+        skill_state = self.player_state["skills"].get(skill.id, {"level": 1, "xp": 0})
+        player_level = skill_state.get("level", 1)
+        xp_display = self._format_number(skill_state.get("xp", 0))
+        self.center_header.config(text=f"{skill.name}")
+        self.center_subheader.config(text=f"Level {player_level} | XP {xp_display}")
 
         for action in skill.actions:
             state = tk.NORMAL if player_level >= action.required_level else tk.DISABLED
-            frame = tk.Frame(self.center_body, bg="#111827", padx=8, pady=8)
-            frame.pack(fill=tk.X, pady=4)
-            tk.Label(frame, text=action.name, fg="#f8fafc", bg="#111827", font=("Segoe UI", 12, "bold")).pack(anchor="w")
+            frame = tk.Frame(self.center_body, bg="#111827", padx=10, pady=10)
+            frame.pack(fill=tk.X, pady=6)
+
+            item = self.data_repo.items.get(action.item_id, {})
+            icon = self._get_image(item.get("image"))
+            icon_label = tk.Label(frame, image=icon, bg="#111827")
+            icon_label.image = icon
+            icon_label.grid(row=0, column=0, rowspan=3, padx=(0, 10))
+
             tk.Label(
                 frame,
-                text=f"Requires lvl {action.required_level} | Value {action.action_value} | {action.flavor}",
-                fg="#cbd5e1",
+                text=f"{action.name} ({item.get('name', '')})",
+                fg="#f8fafc",
                 bg="#111827",
-            ).pack(anchor="w")
-            tk.Button(
+                font=("Segoe UI", 12, "bold"),
+            ).grid(row=0, column=1, sticky="w")
+
+            details = f"Tier {item.get('tier', action.required_level)} | Value {self._format_number(item.get('value', 0))} | Req Lvl {action.required_level}"
+            tk.Label(frame, text=details, fg="#cbd5e1", bg="#111827").grid(row=1, column=1, sticky="w")
+
+            rate = skill.gather_rate(player_level)
+            seconds = action.action_value / rate if rate else 0
+            tk.Label(
                 frame,
-                text="Start",
+                text=f"Gather rate {self._format_number(rate)}/s | {seconds:.1f}s per log",
+                fg="#9ca3af",
+                bg="#111827",
+            ).grid(row=2, column=1, sticky="w")
+
+            btn = tk.Button(
+                frame,
+                text="Gather",
                 state=state,
                 command=lambda a=action, s=skill: self._start_activity(s, a),
-            ).pack(anchor="e")
+                width=10,
+            )
+            btn.grid(row=0, column=2, rowspan=3, padx=(10, 0))
+            self.active_skill_ui[action.id] = {"button": btn, "frame": frame, "rate_label": None}
 
     def _start_activity(self, skill: SkillDefinition, action: SkillAction):
         self.current_activity = {
@@ -351,7 +401,7 @@ class IdleGameApp(tk.Tk):
         action_value = self.current_activity["action"].action_value
         progress_pct = min(100, (self.progress_amount / action_value) * 100)
         self.summary_progress.config(
-            text=f"Progress: {progress_pct:.1f}% | XP gain: {rate:.1f}/s"
+            text=f"Progress: {progress_pct:.1f}% | XP gain: {self._format_number(rate)}/s"
         )
 
     def _manual_save(self):
@@ -370,7 +420,7 @@ class IdleGameApp(tk.Tk):
             # XP gain per second equals gather rate.
             skill_state["xp"] += rate
             self._recalculate_level(skill.id)
-            self.notifications.push(f"+{rate:.1f} {skill.name} XP")
+            self.notifications.push(f"+{self._format_number(rate)} {skill.name} XP")
 
             self.progress_amount += rate
             if self.progress_amount >= action.action_value:
@@ -380,6 +430,8 @@ class IdleGameApp(tk.Tk):
                 actions_log[action.id] = actions_log.get(action.id, 0) + 1
                 self.notifications.push(f"Gathered {self.data_repo.items[action.item_id]['name']}")
             self._update_summary_progress()
+            self._refresh_active_skill_view()
+        self._refresh_active_tab()
         self.after(self.TICK_MS, self._tick)
 
     def _grant_item(self, item_id: str, qty: int):
@@ -396,59 +448,193 @@ class IdleGameApp(tk.Tk):
         if level != skill_state["level"]:
             skill_state["level"] = level
             self.notifications.push(f"{self.data_repo.skills[skill_id].name} leveled to {level}!")
+            if self.active_skill and self.active_skill.id == skill_id:
+                self._refresh_active_skill_view()
+
+    def _refresh_active_skill_view(self):
+        if not self.active_skill:
+            return
+        skill = self.active_skill
+        skill_state = self.player_state["skills"].get(skill.id, {"level": 1, "xp": 0})
+        level = skill_state.get("level", 1)
+        xp_display = self._format_number(skill_state.get("xp", 0))
+        self.center_subheader.config(text=f"Level {level} | XP {xp_display}")
+        rate = skill.gather_rate(level)
+        for action in skill.actions:
+            ui = self.active_skill_ui.get(action.id)
+            if not ui:
+                continue
+            allowed = level >= action.required_level
+            ui["button"].config(state=tk.NORMAL if allowed else tk.DISABLED)
+            # Update time display row 2 column 1
+            for widget in ui["frame"].grid_slaves(row=2, column=1):
+                seconds = action.action_value / rate if rate else 0
+                widget.config(text=f"Gather rate {self._format_number(rate)}/s | {seconds:.1f}s per log")
 
     def _show_tab(self, tab_name: str):
-        content = {
-            "Inventory": self._tab_inventory,
-            "Stats": self._tab_stats,
-            "Collection Log": self._tab_collection,
-            "Equipment": lambda: "Equipment slots coming soon.",
-            "Settings": lambda: "Settings will cover audio, UI, and accessibility.",
-            "Debug": lambda: "Debug tools will enable live editing of items and recipes.",
-        }.get(tab_name, lambda: "")
-        text = content()
-        self.tab_content.config(state=tk.NORMAL)
-        self.tab_content.delete("1.0", tk.END)
-        self.tab_content.insert(tk.END, text)
-        self.tab_content.config(state=tk.DISABLED)
+        self.active_tab = tab_name
+        for child in self.tab_content_frame.winfo_children():
+            child.destroy()
 
-    def _tab_inventory(self) -> str:
-        lines = ["Inventory:\n"]
-        if not self.player_state.get("inventory"):
-            lines.append(" - Empty")
-        for item_id, qty in sorted(self.player_state.get("inventory", {}).items()):
+        if tab_name == "Inventory":
+            self.inventory_frame = tk.Frame(self.tab_content_frame, bg="#0f172a")
+            self.inventory_frame.pack(expand=True, fill=tk.BOTH)
+            self._render_inventory_tab()
+        elif tab_name == "Stats":
+            self.stats_frame = tk.Frame(self.tab_content_frame, bg="#0f172a")
+            self.stats_frame.pack(expand=True, fill=tk.BOTH)
+            self._render_stats_tab()
+        elif tab_name == "Collection Log":
+            self.collection_frame = tk.Frame(self.tab_content_frame, bg="#0f172a")
+            self.collection_frame.pack(expand=True, fill=tk.BOTH)
+            self._render_collection_tab()
+        else:
+            msg = {
+                "Equipment": "Equipment slots coming soon.",
+                "Settings": "Settings will cover audio, UI, and accessibility.",
+                "Debug": "Debug tools will enable live editing of items and recipes.",
+            }.get(tab_name, "")
+            tk.Label(
+                self.tab_content_frame,
+                text=msg,
+                fg="#e5e7eb",
+                bg="#0f172a",
+                justify=tk.LEFT,
+            ).pack(anchor="nw", padx=6, pady=6)
+
+    def _render_inventory_tab(self):
+        frame = self.inventory_frame
+        for child in frame.winfo_children():
+            child.destroy()
+        inventory = self.player_state.get("inventory", {})
+        if not inventory:
+            tk.Label(frame, text="Inventory empty", fg="#e5e7eb", bg="#0f172a").pack(anchor="w", padx=8, pady=4)
+            return
+        columns = 4
+        row = col = 0
+        for item_id, qty in sorted(inventory.items()):
             item = self.data_repo.items.get(item_id, {"name": item_id})
-            lines.append(f" - {item['name']}: {qty}")
-        return "\n".join(lines)
+            cell = tk.Frame(frame, width=96, height=96, bg="#111827", relief=tk.RIDGE, borderwidth=2)
+            cell.grid(row=row, column=col, padx=6, pady=6)
+            cell.grid_propagate(False)
+            icon = self._get_image(item.get("image"))
+            icon_label = tk.Label(cell, image=icon, bg="#111827")
+            icon_label.image = icon
+            icon_label.place(relx=0.5, rely=0.5, anchor="center")
+            if qty > 1:
+                tk.Label(
+                    cell,
+                    text=self._format_number(qty),
+                    fg="#f9fafb",
+                    bg="#111827",
+                    font=("Segoe UI", 10, "bold"),
+                ).place(relx=0.9, rely=0.1, anchor="ne")
+            tk.Label(cell, text=item.get("name", item_id), fg="#e5e7eb", bg="#111827").place(relx=0.5, rely=0.95, anchor="s")
+            col += 1
+            if col >= columns:
+                col = 0
+                row += 1
 
-    def _tab_stats(self) -> str:
-        lines = ["Stats:\n"]
-        for skill_id, state in self.player_state.get("skills", {}).items():
+    def _render_stats_tab(self):
+        self.stats_labels = {}
+        for child in self.stats_frame.winfo_children():
+            child.destroy()
+        for idx, (skill_id, state) in enumerate(self.player_state.get("skills", {}).items()):
             skill = self.data_repo.skills.get(skill_id)
-            if skill:
-                lines.append(
-                    f" - {skill.name}: Level {state.get('level', 1)} (XP {state.get('xp', 0):.0f})"
-                )
-        return "\n".join(lines)
+            if not skill:
+                continue
+            row_frame = tk.Frame(self.stats_frame, bg="#0f172a")
+            row_frame.pack(anchor="w", pady=4, padx=6)
+            tk.Label(row_frame, text=skill.name, fg="#f8fafc", bg="#0f172a", font=("Segoe UI", 11, "bold")).grid(row=0, column=0, sticky="w")
+            lvl_label = tk.Label(row_frame, text="", fg="#cbd5e1", bg="#0f172a")
+            lvl_label.grid(row=1, column=0, sticky="w")
+            self.stats_labels[skill_id] = lvl_label
+        self._update_stats_labels()
 
-    def _tab_collection(self) -> str:
-        lines = ["Collection Log:\nItems:"]
+    def _render_collection_tab(self):
+        frame = self.collection_frame
+        for child in frame.winfo_children():
+            child.destroy()
+        tk.Label(frame, text="Collection Log", fg="#f8fafc", bg="#0f172a", font=("Segoe UI", 12, "bold")).pack(anchor="w", padx=6, pady=(0, 6))
+        items_frame = tk.Frame(frame, bg="#0f172a")
+        items_frame.pack(anchor="w")
         item_log = self.player_state.get("collection_log", {}).get("items", {})
         if not item_log:
-            lines.append(" - None")
-        for item_id, qty in sorted(item_log.items()):
-            item = self.data_repo.items.get(item_id, {"name": item_id})
-            lines.append(f" - {item['name']}: {qty}")
-        lines.append("\nActions:")
+            tk.Label(items_frame, text="No items collected yet.", fg="#e5e7eb", bg="#0f172a").pack(anchor="w")
+        else:
+            for item_id, qty in sorted(item_log.items()):
+                item = self.data_repo.items.get(item_id, {"name": item_id})
+                tk.Label(
+                    items_frame,
+                    text=f"{item.get('name', item_id)}: {self._format_number(qty)}",
+                    fg="#e5e7eb",
+                    bg="#0f172a",
+                ).pack(anchor="w")
+        actions_frame = tk.Frame(frame, bg="#0f172a")
+        actions_frame.pack(anchor="w", pady=(8, 0))
+        tk.Label(actions_frame, text="Actions", fg="#f8fafc", bg="#0f172a", font=("Segoe UI", 11, "bold")).pack(anchor="w")
+        any_actions = False
         for skill_id, skill_state in self.player_state.get("skills", {}).items():
             actions = skill_state.get("actions", {})
             if not actions:
                 continue
+            any_actions = True
             skill = self.data_repo.skills.get(skill_id)
-            lines.append(f" {skill.name}:")
+            tk.Label(actions_frame, text=skill.name, fg="#e5e7eb", bg="#0f172a", font=("Segoe UI", 10, "bold")).pack(anchor="w")
             for action_id, count in actions.items():
-                lines.append(f"  - {action_id}: {count} times")
-        return "\n".join(lines)
+                tk.Label(
+                    actions_frame,
+                    text=f" - {action_id}: {self._format_number(count)} times",
+                    fg="#cbd5e1",
+                    bg="#0f172a",
+                ).pack(anchor="w", padx=10)
+        if not any_actions:
+            tk.Label(actions_frame, text="No actions logged yet.", fg="#e5e7eb", bg="#0f172a").pack(anchor="w")
+
+    def _update_stats_labels(self):
+        for skill_id, label in getattr(self, "stats_labels", {}).items():
+            state = self.player_state.get("skills", {}).get(skill_id, {"level": 1, "xp": 0})
+            text = f"Level {state.get('level', 1)} | XP {self._format_number(state.get('xp', 0))}"
+            label.config(text=text)
+
+    def _refresh_active_tab(self):
+        if self.active_tab == "Inventory":
+            self._render_inventory_tab()
+        elif self.active_tab == "Stats":
+            self._update_stats_labels()
+        elif self.active_tab == "Collection Log":
+            self._render_collection_tab()
+
+    def _get_image(self, path: Optional[str]) -> tk.PhotoImage:
+        if not path:
+            return tk.PhotoImage(width=64, height=64)
+        if path in self.image_cache:
+            return self.image_cache[path]
+        file_path = Path(path)
+        if not file_path.exists():
+            placeholder = tk.PhotoImage(width=64, height=64)
+            placeholder.put("#1f2937", to=(0, 0, 64, 64))
+            self.image_cache[path] = placeholder
+            return placeholder
+        image = tk.PhotoImage(file=str(file_path))
+        self.image_cache[path] = image
+        return image
+
+    @staticmethod
+    def _format_number(value: float) -> str:
+        suffixes = [
+            (1_000_000_000_000, "T"),
+            (1_000_000_000, "B"),
+            (1_000_000, "M"),
+            (1_000, "K"),
+        ]
+        abs_val = abs(value)
+        for threshold, suffix in suffixes:
+            if abs_val >= threshold:
+                return f"{value / threshold:.2f}{suffix}"
+        if abs_val < 1000 and value % 1 == 0:
+            return f"{int(value)}"
+        return f"{value:.2f}"
 
     # -------------------------- SAVE/LOAD --------------------------
     def _load_selected(self):
